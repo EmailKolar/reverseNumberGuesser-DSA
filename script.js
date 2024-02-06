@@ -26,15 +26,29 @@ function startGame(){
     document.querySelector("#correct-button").addEventListener("click",(event)=>guessCorrect())
 }
 
+let min = 1;
+let max = 100;
+let middle;
 
 function makeGuess(){
-    return Math.floor(Math.random()*99)+1
-    /* return 50; */
+    /*return Math.floor(Math.random()*99)+1
+     return 50; */
+    
+    middle = parseInt( min + Math.floor((max-min)/2))
+    return middle;
+
 }
 
 
 
 function guessTooHigh(){
+    max = middle-1;
+
+    if(min>max){
+        scamDetection();
+        return;
+    }
+
     listIndex++;
     const guess = makeGuess();
     const list = document.querySelector("#guess-list");
@@ -50,6 +64,13 @@ function guessTooHigh(){
     document.querySelector("#correct-button").addEventListener("click",(event)=>guessCorrect())
 }
 function guessTooLow(){
+    min = middle + 1;
+    
+    if(min>max){
+        scamDetection();
+        return;
+    }
+
     console.log("too low");
     listIndex++;
     const guess = makeGuess();
@@ -83,3 +104,12 @@ function guessCorrect(){
 
 }
 
+function scamDetection(){
+    listIndex++;
+    const list = document.querySelector("#guess-list");
+    const html = `<li id="li-id${listIndex-1}">${listIndex-1}. I'm guessing ${lastGuess} - that was too high.</li>
+    <br>
+    <p> SCAM DETECTED - I'm NOT guessing anymore</p>`
+    document.querySelector(`#li-id${listIndex-1}`).remove();
+    list.insertAdjacentHTML("beforeend",html);
+}
